@@ -36,7 +36,6 @@ public class CommandController implements Runnable {
 			LOGGER.info("rc relativeCrypto : searches relativeCrypto in the database");
 			LOGGER.info("nrc numericalRelativeCrypto : searches numericalRelativeCrypto in the database");
 			LOGGER.info("load filename : loads crypto crossword grid from file");
-			
 
 			while (true) {
 
@@ -48,15 +47,16 @@ public class CommandController implements Runnable {
 			}
 
 		} catch (IOException e) {
-			LOGGER.error(e.getCause().getMessage());
+			LOGGER.error(e);
 		} catch (Exception e) {
-			LOGGER.error(e.getCause().getMessage());
+			LOGGER.error(e);
 		} finally {
 			if (br != null) {
 				try {
 					br.close();
 				} catch (IOException e) {
-					LOGGER.error(e.getCause().getMessage());;
+					LOGGER.error(e);
+					;
 				}
 			}
 		}
@@ -66,40 +66,42 @@ public class CommandController implements Runnable {
 	private static void manageCommands(String commandLine) {
 		Scanner scanner = new Scanner(commandLine);
 		scanner.useDelimiter(" ");
-		String command = scanner.next();
-		String argument = "";
-		try {
-			while (scanner.hasNext()) {
-				argument += scanner.next() + " ";
+		if (scanner.hasNext()) {
+			String command = scanner.next();
+			String argument = "";
+			try {
+				while (scanner.hasNext()) {
+					argument += scanner.next() + " ";
+				}
+			} catch (NoSuchElementException e) {
+				// DO NOTHING
 			}
-		} catch (NoSuchElementException e) {
-			// DO NOTHING
-		}
 
-		scanner.close();
+			scanner.close();
 
-		// System.out.println("cmd: " + command + ", arg: " + argument);
+			// System.out.println("cmd: " + command + ", arg: " + argument);
 
-		switch (command) {
-		case "q":
-			LOGGER.info("Exit!");
-			System.exit(0);
-			break;
-		case "get":
-			wordService.findOne(argument);
-			break;
-		case "rc":
-			wordService.findByRelativeCrypto(argument.toUpperCase());
-			break;
-		case "nrc":
-			wordService.reverseNumericalCrypto(argument);
-			break;
-		case "load":
-			wordService.loadGrid(argument);
-			break;
-		default:
-			LOGGER.error("Unknown command [" + command + " " + argument + "]");
-			break;
+			switch (command) {
+			case "q":
+				LOGGER.info("Exit!");
+				System.exit(0);
+				break;
+			case "get":
+				wordService.findOne(argument);
+				break;
+			case "rc":
+				wordService.findByRelativeCrypto(argument.toUpperCase());
+				break;
+			case "nrc":
+				wordService.reverseNumericalCrypto(argument);
+				break;
+			case "load":
+				wordService.loadGrid(argument);
+				break;
+			default:
+				LOGGER.error("Unknown command [" + command + " " + argument + "]");
+				break;
+			}
 		}
 
 	}
