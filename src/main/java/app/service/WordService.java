@@ -2,13 +2,16 @@ package app.service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import app.model.Grid;
 import app.model.Word;
+import app.model.helper.GridHelper;
 import app.model.helper.WordHelper;
 import app.repository.WordRepository;
 
@@ -70,6 +73,9 @@ public class WordService {
 	}
 
 	public void loadGrid(String filename) {
-		WordHelper.loadGrid("/grids/" + filename.trim() + ".txt");
+		Grid grid = GridHelper.loadGrid(filename);
+		GridHelper.solveGrid(grid, wordRepository);
 	}
+	
+
 }

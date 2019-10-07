@@ -49,7 +49,7 @@ public class CommandController implements Runnable {
 		} catch (IOException e) {
 			LOGGER.error(e);
 		} catch (Exception e) {
-			LOGGER.error(e);
+			e.printStackTrace();
 		} finally {
 			if (br != null) {
 				try {

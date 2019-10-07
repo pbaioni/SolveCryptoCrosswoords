@@ -25,9 +25,9 @@ public class RelativeCryptoTest {
 	@Test
 	public void testNRCAlgorithm() {
 
-		assertTrue(compareNRC("3-7-7-3-12-14-3", "ABBACDA"));
+		assertTrue(compareNRC("3 7 7 3 12 14 3", "ABBACDA"));
 		
-		assertTrue(compareNRC("1-2-3-4-5-6-6-12", "ABCDEFFG"));
+		assertTrue(compareNRC("1 2 3 4 5 6 6 12", "ABCDEFFG"));
 		
 	}
 
