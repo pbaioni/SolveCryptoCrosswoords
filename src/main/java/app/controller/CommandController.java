@@ -35,6 +35,7 @@ public class CommandController implements Runnable {
 			LOGGER.info("get word : searches word in the database");
 			LOGGER.info("rc relativeCrypto : searches relativeCrypto in the database");
 			LOGGER.info("nrc numericalRelativeCrypto : searches numericalRelativeCrypto in the database");
+			LOGGER.info("load filename : loads crypto crossword grid from file");
 			
 
 			while (true) {
@@ -92,6 +93,9 @@ public class CommandController implements Runnable {
 			break;
 		case "nrc":
 			wordService.reverseNumericalCrypto(argument);
+			break;
+		case "load":
+			wordService.loadGrid(argument);
 			break;
 		default:
 			LOGGER.error("Unknown command [" + command + " " + argument + "]");

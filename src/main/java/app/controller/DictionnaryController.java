@@ -36,7 +36,7 @@ public class DictionnaryController {
 			try {
 				// reading the single letter dictionnary file (ex: ITALIANO.f)
 				String fileName = "./languages/italian/ITALIANO." + Character.toString((char) (65 + i));
-				System.out.println("Processing file: " + fileName);
+				LOGGER.info("Processing file: " + fileName);
 				BufferedReader br = new BufferedReader(
 						new FileReader(getClass().getClassLoader().getResource(fileName).getFile()));
 				String wordLine;

@@ -3,6 +3,7 @@ package app.model.helper;
 import org.apache.log4j.Logger;
 
 import app.main.Application;
+import app.utils.AppFiles;
 
 public class WordHelper {
 	
@@ -43,6 +44,12 @@ public class WordHelper {
 		LOGGER.debug("numerical key " + numericalCrypto + " converted to " + alphabeticCrypto);
 		
 		return alphabeticCrypto;
+	}
+
+	public static void loadGrid(String filePath) {
+		
+		String grid = AppFiles.getResourceAsString(filePath);
+		LOGGER.info("grid: " + grid);
 	}
 
 }

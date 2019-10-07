@@ -68,4 +68,8 @@ public class WordService {
 	public void reverseNumericalCrypto(String numericalCrypto){
 		findByRelativeCrypto(WordHelper.numericalToAlphabetic(numericalCrypto));
 	}
+
+	public void loadGrid(String filename) {
+		WordHelper.loadGrid("/grids/" + filename.trim() + ".txt");
+	}
 }
