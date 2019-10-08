@@ -39,26 +39,38 @@ public class GridHelper {
 		for (Map.Entry<String, String> entry : grid.getDecodeMap().entrySet()) {
 
 			String numericalRelativeCrypto = entry.getKey();
-			// System.out.println(entry.getKey() + " : " + entry.getValue().toString());
 			for (Word w : repository.findByRelativeCrypto(WordHelper.numericalToAlphabetic(numericalRelativeCrypto))) {
 				String tempKey = computeKeyFromNrc(numericalRelativeCrypto, w.getWord());
 				if(init) {
-					
+
 					tempKeys.add(tempKey);
 					
 				} else { 
-					
+
 					tempKeys = mergeKeys(tempKeys, tempKey);
-					
 				}
 			}
 			
 			init = false;
+			LOGGER.debug(printTempKeys(tempKeys));
 
 		}
-		
-		System.out.println("Key: " + tempKeys.get(0));
 
+		if(tempKeys.size() == 1) {
+			LOGGER.info("Result key: " + tempKeys.get(0));
+		}
+		else {
+			LOGGER.info("NO solution found [solution size=" + tempKeys.size() + "]");
+		}
+		
+	}
+
+	private static String printTempKeys(List<String> keys) {
+		String print = "Temp keys: \n";
+		for(String key : keys) {
+			print += key + "\n";
+		}
+		return print;
 	}
 
 	public static String computeKeyFromNrc(String numericalRelativeCrypto, String word) {
@@ -68,9 +80,10 @@ public class GridHelper {
 		for (int i = 0; i < letters.length; i++) {
 			int index = Integer.parseInt(letters[i].trim());
 			String character = word.substring(i, i+1);
-			key = putCharacter(key, character, index);
+			key = putCharacter(key, character, index-1);
 		}
-
+		
+		LOGGER.debug("Computing NRC: word [" + word + "], nrc [" + numericalRelativeCrypto + "], key [" + key + "]");
 		return key;
 	}
 
@@ -87,22 +100,20 @@ public class GridHelper {
 			String char2 = tempKey.substring(i, i + 1);
 			if (!char1.equals("?") && !char2.equals("?")) {
 				if (!char1.equals(char2)) {
-					compatibility = false;
+					LOGGER.debug("Compatibility: key1 [" + decodeKey + "], key2 [" + tempKey + "], result [false]");
+					LOGGER.debug("Incompatibility at index " + i + " chars " + char1 + " and " + char2);
+					return false;
 				}
 			}
 		}
+		
+		LOGGER.debug("Compatibility: key1 [" + decodeKey + "], key2 [" + tempKey + "], result [true]");
 		return compatibility;
 	}
 
 	public static List<String> mergeKeys(List<String> tempKeys, String tempKey) {
-
-		
-		// key1   = "?a??????????r??????t??????";
-		// key2   = "??f????????????i???t??????";
-		// merged = "?af?????????r??i???t??????";
 		
 		List<String> mergedKeys = new ArrayList<String>();
-		
 		for (String key : tempKeys) {
 			if (areCompatibleKeys(key, tempKey)) {
 				//merging tempKey into key
@@ -113,6 +124,8 @@ public class GridHelper {
 						mergedKey = putCharacter(mergedKey, char2, i);
 					}
 				}
+				
+				LOGGER.debug("Keys merged: key1 [" + key + "], key2 [" + tempKey + "], merged [" + mergedKey + "]");
 				mergedKeys.add(mergedKey);
 			}
 		}

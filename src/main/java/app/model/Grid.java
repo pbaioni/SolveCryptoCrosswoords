@@ -44,18 +44,12 @@ public class Grid {
 		for (String row : grid) {
 
 			for (String s : row.split("-")) {
-//				s.trim();
-//				s = s.replaceAll("-", " ");
-//				s.trim();
-//				s = s.replaceAll("  ", " ");
-//				s = s.replaceAll("  ", " ");
 				String numericalRelativeCrypto = s.trim();
 				String word = "";
-				
-				//5 means 3 letter word (two spaces)
-				if (numericalRelativeCrypto.length() > 5) {
-					int wordLength = numericalRelativeCrypto.split(" ").length;
-					for (int i = 1; i < wordLength+1; i++) {
+
+				int wordLength = numericalRelativeCrypto.split(" ").length;
+				if (wordLength > 6) {
+					for (int i = 1; i < wordLength + 1; i++) {
 						word += "?";
 					}
 
@@ -68,7 +62,6 @@ public class Grid {
 		GridHelper.printMap(decodeMap);
 
 	}
-
 
 	public Map<String, String> getDecodeMap() {
 		return decodeMap;

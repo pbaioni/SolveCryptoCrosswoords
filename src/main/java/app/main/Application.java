@@ -46,6 +46,8 @@ public class Application {
 			CommandController commandController = new CommandController(wordService);
 			commandController.run();
 		}
+		
+		wordService.loadGrid("1");
 
 	}
 
