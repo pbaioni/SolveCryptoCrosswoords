@@ -19,19 +19,9 @@ public class Application {
 
 	private WordService wordService;
 
-	private Executor executor;
-
 	public Application(WordService wordService) {
 		appProperties = new ApplicationProperties("application.properties");
 		this.wordService = wordService;
-		this.executor = new Executor() {
-
-			@Override
-			public void execute(Runnable command) {
-				// TODO Auto-generated method stub
-
-			}
-		};
 	}
 
 	public void start() {
@@ -48,6 +38,8 @@ public class Application {
 		}
 		
 		wordService.loadGrid("1");
+		
+		wordService.loadGrid("2");
 
 	}
 

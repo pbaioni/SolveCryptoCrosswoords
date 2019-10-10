@@ -1,142 +1,82 @@
 package app.model.helper;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import app.model.Grid;
+import app.model.Key;
 import app.model.Word;
 import app.repository.WordRepository;
 import app.utils.AppFiles;
 
 public class GridHelper {
 
-	private final static Logger LOGGER = Logger.getLogger(WordHelper.class);
+	private final static Logger LOGGER = Logger.getLogger(GridHelper.class);
 
 	public static Grid loadGrid(String filename) {
+		
 		String gridPath = "/grids/" + filename.trim() + ".txt";
 		List<String> stringGrid = AppFiles.getResourceAsLines(gridPath);
-		for (String row : stringGrid) {
-			System.out.println(row);
-		}
-
 		return new Grid(stringGrid);
 	}
 
-	public static void printMap(Map<String, String> decodeMap) {
-		for (Map.Entry<String, String> entry : decodeMap.entrySet()) {
-			System.out.println(entry.getKey() + " : " + entry.getValue().toString());
-		}
-	}
-
+	
 	public static void solveGrid(Grid grid, WordRepository repository) {
 
-		List<String> tempKeys = new ArrayList<String>();
+		List<Key> initKeys = new ArrayList<Key>();
 		boolean init = true;
 
 		for (Map.Entry<String, String> entry : grid.getDecodeMap().entrySet()) {
 
 			String numericalRelativeCrypto = entry.getKey();
 			for (Word w : repository.findByRelativeCrypto(WordHelper.numericalToAlphabetic(numericalRelativeCrypto))) {
-				String tempKey = computeKeyFromNrc(numericalRelativeCrypto, w.getWord());
-				if(init) {
-
-					tempKeys.add(tempKey);
-					
-				} else { 
-
-					tempKeys = mergeKeys(tempKeys, tempKey);
-				}
-			}
-			
-			init = false;
-			LOGGER.debug(printTempKeys(tempKeys));
-
-		}
-
-		if(tempKeys.size() == 1) {
-			LOGGER.info("Result key: " + tempKeys.get(0));
-		}
-		else {
-			LOGGER.info("NO solution found [solution size=" + tempKeys.size() + "]");
-		}
-		
-	}
-
-	private static String printTempKeys(List<String> keys) {
-		String print = "Temp keys: \n";
-		for(String key : keys) {
-			print += key + "\n";
-		}
-		return print;
-	}
-
-	public static String computeKeyFromNrc(String numericalRelativeCrypto, String word) {
-
-		String key = "??????????????????????????";
-		String[] letters = numericalRelativeCrypto.split(" ");
-		for (int i = 0; i < letters.length; i++) {
-			int index = Integer.parseInt(letters[i].trim());
-			String character = word.substring(i, i+1);
-			key = putCharacter(key, character, index-1);
-		}
-		
-		LOGGER.debug("Computing NRC: word [" + word + "], nrc [" + numericalRelativeCrypto + "], key [" + key + "]");
-		return key;
-	}
-
-
-	public static boolean areCompatibleKeys(String decodeKey, String tempKey) {
-		
-		if (decodeKey.length() != tempKey.length()) {
-			return false;
-		}
-
-		boolean compatibility = true;
-		for (int i = 0; i < decodeKey.length(); i++) {
-			String char1 = decodeKey.substring(i, i + 1);
-			String char2 = tempKey.substring(i, i + 1);
-			if (!char1.equals("?") && !char2.equals("?")) {
-				if (!char1.equals(char2)) {
-					LOGGER.debug("Compatibility: key1 [" + decodeKey + "], key2 [" + tempKey + "], result [false]");
-					LOGGER.debug("Incompatibility at index " + i + " chars " + char1 + " and " + char2);
-					return false;
-				}
-			}
-		}
-		
-		LOGGER.debug("Compatibility: key1 [" + decodeKey + "], key2 [" + tempKey + "], result [true]");
-		return compatibility;
-	}
-
-	public static List<String> mergeKeys(List<String> tempKeys, String tempKey) {
-		
-		List<String> mergedKeys = new ArrayList<String>();
-		for (String key : tempKeys) {
-			if (areCompatibleKeys(key, tempKey)) {
-				//merging tempKey into key
-				String mergedKey = key;
-				for (int i = 0; i < key.length(); i++) {
-					String char2 = tempKey.substring(i, i + 1);
-					if (!char2.equals("?")) {
-						mergedKey = putCharacter(mergedKey, char2, i);
+				
+				if (init) {
+					Key tempKey = new Key(numericalRelativeCrypto, w.getWord());
+					initKeys.add(tempKey);
+				} else {
+					for (Key key : initKeys) {
+						boolean mergeOk = key.mergeResult(numericalRelativeCrypto, w.getWord());
+						
 					}
 				}
-				
-				LOGGER.debug("Keys merged: key1 [" + key + "], key2 [" + tempKey + "], merged [" + mergedKey + "]");
-				mergedKeys.add(mergedKey);
 			}
+
+			init = false;
+
 		}
 		
-		return mergedKeys;
+		//printing results
+		initKeys.sort(Comparator.comparing(Key::getValidMerges).reversed());
+		LOGGER.info("Solution key:");
+		initKeys.get(0).printKey();
+		LOGGER.info("");
+		
+		grid.setSolutionKey(initKeys.get(0));
+		
 	}
 	
-	private static String putCharacter(String key, String character, int index) {
-		String before = key.substring(0, index);
-		String after = key.substring(index+1, key.length());
-		return before + character + after;
-	}
+	
+	public static String cleanNrc(String nrc) {
+		
+		String rval = nrc.trim();
+		rval = rval.replaceAll("[-+.^:,@&]", "");
+		rval = rval.replaceAll("  ", " ");
 
+		LOGGER.debug("Cleaned nrc [" + nrc + "] to [" + rval + "]");
+
+		return rval;
+	}
+	
+	
+	public static void printMap(Map<String, String> decodeMap) {
+		LOGGER.info("Cryptos:");
+		for (Map.Entry<String, String> entry : decodeMap.entrySet()) {
+			LOGGER.info(entry.getKey() + " : " + entry.getValue().toString());
+		}
+	}
 }
