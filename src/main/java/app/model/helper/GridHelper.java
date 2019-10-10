@@ -19,7 +19,7 @@ public class GridHelper {
 
 	public static Grid loadGrid(String filename) {
 		
-		String gridPath = "/grids/" + filename.trim() + ".txt";
+		String gridPath = "/grids/" + filename.trim() + ".dat";
 		List<String> stringGrid = AppFiles.getResourceAsLines(gridPath);
 		return new Grid(stringGrid);
 	}

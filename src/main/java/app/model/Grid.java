@@ -15,9 +15,9 @@ public class Grid {
 
 	private final static Logger LOGGER = Logger.getLogger(Grid.class);
 
-	private List<String> gridRows;
+	private List<String> cryptoRows;
 
-	private List<String> solution;
+	private List<String> solutionRows;
 
 	private Key solutionKey;
 
@@ -25,7 +25,7 @@ public class Grid {
 
 	public Grid(List<String> gridRows) {
 
-		this.gridRows = gridRows;
+		this.cryptoRows = gridRows;
 
 		decodeMap = new TreeMap<String, String>(new Comparator<String>() {
 			@Override
@@ -40,7 +40,7 @@ public class Grid {
 			}
 		});
 
-		fillDecodeMap(this.gridRows);
+		fillDecodeMap(this.cryptoRows);
 
 		solutionKey = new Key();
 
@@ -75,7 +75,7 @@ public class Grid {
 
 	public void calculateSolution() {
 
-		for (String row : gridRows) {
+		for (String row : cryptoRows) {
 			String solutionRow = "";
 			for (String s : row.split("-")) {
 
@@ -94,7 +94,7 @@ public class Grid {
 			}
 
 			solutionRow = solutionRow.substring(0, 25);
-			solution.add(solutionRow);
+			solutionRows.add(solutionRow);
 		}
 	}
 
@@ -118,16 +118,16 @@ public class Grid {
 
 	public void setSolutionKey(Key solutionKey) {
 		this.solutionKey = solutionKey;
-		solution = new ArrayList<String>();
+		solutionRows = new ArrayList<String>();
 		calculateSolution();
-		printSolution(solution);
+		printSolution(solutionRows);
 	}
 
 	private void printSolution(List<String> solution2) {
 		String space = "   ";
 		LOGGER.info(space + "Solution:");
 		LOGGER.info(space + "-----------------------------");
-		for (String row : solution) {
+		for (String row : solutionRows) {
 			LOGGER.info(space + "| " + row + " |");
 		}
 		LOGGER.info(space + "-----------------------------");

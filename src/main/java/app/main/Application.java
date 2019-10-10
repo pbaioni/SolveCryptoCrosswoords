@@ -29,29 +29,19 @@ public class Application {
 		if (appProperties.isCreatDB()) {
 			DictionnaryController dictionnaryCreator = new DictionnaryController(wordService);
 			dictionnaryCreator.createDictionnary();
-			testRecovery();
 		}
 
 		if (appProperties.isLaunchInlineCommands()) {
 			CommandController commandController = new CommandController(wordService);
 			commandController.run();
 		}
-		
+
+		//load and solve example 1
 		wordService.loadGrid("1");
-		
+
+		//load and solve example 2
 		wordService.loadGrid("2");
 
 	}
 
-	private void testRecovery() {
-		LOGGER.info(wordService.findOne("abbattuto"));
-		LOGGER.info(wordService.findOne("giocherellone"));
-		LOGGER.info(wordService.findOne("hotel"));
-		LOGGER.info(wordService.findOne("marittimo"));
-		LOGGER.info(wordService.findOne("perdindirindina"));
-		LOGGER.info(wordService.findOne("sussulto"));
-		LOGGER.info(wordService.findOne("quadro"));
-		LOGGER.info(wordService.findOne("zuzzurellone"));
-		LOGGER.info(wordService.findOne("notinbase"));
-	}
 }
