@@ -1,6 +1,7 @@
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -9,11 +10,15 @@ import app.model.properties.GridProperties;
 
 public class KeysTest {
 	
-	@Autowired
 	private GridProperties gridProperties;
 	
+	@Before
+	public void init() {
+		gridProperties = new GridProperties("grid.properties");
+	}
+	
 	@Test
-	public void testCompatibility() {
+	public void testCompatibility() { 
 
 		Key key = new Key(gridProperties);
 		
