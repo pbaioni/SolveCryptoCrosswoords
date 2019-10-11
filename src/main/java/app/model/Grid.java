@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
@@ -72,29 +73,27 @@ public class Grid {
 		GridHelper.printMap(decodeMap);
 
 	}
-
+	
 	public void calculateSolution() {
 
 		for (String row : cryptoRows) {
-			String solutionRow = "";
-			for (String s : row.split("-")) {
-
-				String numericalRelativeCrypto = GridHelper.cleanNrc(s);
-				String[] numbers = numericalRelativeCrypto.split(" ");
-
-				for (int i = 0; i < numbers.length; i++) {
-					String numberAsString = numbers[i];
-					if (!numberAsString.equals("")) {
-						int number = Integer.parseInt(numbers[i]);
-						String letter = solutionKey.getLetterForNumber(number);
-						solutionRow += letter + " ";
-					}
+			
+			Scanner scanner = new Scanner(row);
+			StringBuilder builder = new StringBuilder();
+			while(scanner.hasNext()) {
+				String numberAsString = scanner.next();
+				if (!numberAsString.equals("-")) {
+					int number = Integer.parseInt(numberAsString);
+					String letter = solutionKey.getLetterForNumber(number);
+					builder.append(letter);
 				}
-				solutionRow += "- ";
+				else {
+					builder.append("-");
+				}
+				builder.append(" ");
 			}
 
-			solutionRow = solutionRow.substring(0, 25);
-			solutionRows.add(solutionRow);
+			solutionRows.add(builder.toString());
 		}
 	}
 
