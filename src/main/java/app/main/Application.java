@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import app.controller.CommandController;
 import app.controller.DictionnaryController;
 import app.main.properties.ApplicationProperties;
+import app.service.GridService;
 import app.service.WordService;
 
 public class Application {
@@ -14,10 +15,13 @@ public class Application {
 	private ApplicationProperties appProperties;
 
 	private WordService wordService;
+	
+	private GridService gridService;
 
-	public Application(WordService wordService) {
+	public Application(WordService wordService, GridService gridService) {
 		appProperties = new ApplicationProperties("application.properties");
 		this.wordService = wordService;
+		this.gridService = gridService;
 	}
 
 	public void start() {
@@ -28,15 +32,15 @@ public class Application {
 		}
 
 		if (appProperties.isLaunchInlineCommands()) {
-			CommandController commandController = new CommandController(wordService);
+			CommandController commandController = new CommandController(wordService, gridService);
 			commandController.run();
 		}
 
 		//load and solve example 1
-		wordService.loadGrid("grid1.dat");
+		gridService.loadGrid("grid1.dat");
 
 		//load and solve example 2
-		wordService.loadGrid("grid2.dat");
+		gridService.loadGrid("grid2.dat");
 
 	}
 

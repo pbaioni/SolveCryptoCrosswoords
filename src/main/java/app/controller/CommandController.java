@@ -11,6 +11,7 @@ import java.util.Scanner;
 import org.apache.log4j.Logger;
 
 import app.model.Word;
+import app.service.GridService;
 import app.service.WordService;
 
 public class CommandController implements Runnable {
@@ -18,9 +19,12 @@ public class CommandController implements Runnable {
 	private final static Logger LOGGER = Logger.getLogger(CommandController.class);
 
 	private static WordService wordService;
+	
+	private static GridService gridService;
 
-	public CommandController(WordService wordService) {
+	public CommandController(WordService wordService, GridService gridService) {
 		CommandController.wordService = wordService;
+		CommandController.gridService = gridService;
 	}
 
 	@Override
@@ -96,7 +100,7 @@ public class CommandController implements Runnable {
 				wordService.reverseNumericalCrypto(argument);
 				break;
 			case "load":
-				wordService.loadGrid(argument);
+				gridService.loadGrid(argument);
 				break;
 			default:
 				LOGGER.error("Unknown command [" + command + " " + argument + "]");

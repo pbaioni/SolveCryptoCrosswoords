@@ -5,6 +5,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import app.controller.DictionnaryController;
 import app.main.properties.ApplicationProperties;
+import app.service.GridService;
 import app.service.WordService;
 
 /** 
@@ -21,10 +22,11 @@ public class LaunchApplication {
 		
 		//Get service from context.
 		WordService wordService = ctx.getBean(WordService.class);
+		GridService gridService = ctx.getBean(GridService.class);
 		
-		Application app = new Application(wordService);
+		Application app = new Application(wordService, gridService);
 		app.start();
 	
-		ctx.close();
+		ctx.close(); 
 	}
 }

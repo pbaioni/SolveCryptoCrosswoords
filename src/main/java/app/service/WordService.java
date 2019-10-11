@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import app.model.Grid;
 import app.model.Word;
-import app.model.helper.GridHelper;
 import app.model.helper.WordHelper;
 import app.repository.WordRepository;
 
@@ -70,10 +68,4 @@ public class WordService {
 	public void reverseNumericalCrypto(String numericalCrypto){
 		findByRelativeCrypto(WordHelper.numericalToAlphabetic(numericalCrypto));
 	}
-
-	public void loadGrid(String filename) {
-		GridHelper.solveGrid(new Grid(filename), wordRepository);
-	}
-	
-
 }
