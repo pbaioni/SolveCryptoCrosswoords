@@ -37,24 +37,4 @@ public class AppFiles {
 
 		return fileContent;
 	}
-	
-	public static String getResourceAsString(String resourceName) {
-
-		String resourcePath = getResourcePath(resourceName);
-		return getFileAsString(resourcePath);
-	}
-
-	public static List<String> getResourceAsLines(String resourceName) {
-		String resourcePath = getResourcePath(resourceName);
-		return getFileAsLines(resourcePath);
-	}
-	
-	private static String getResourcePath(String resourceName) {
-		String workingDir = System.getProperty("user.dir");
-		String resourcePath = "/src/main/resources/";
-		String path = workingDir + resourcePath + resourceName;
-		
-		return path;
-	}
-
 }

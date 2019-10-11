@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import app.model.Grid;
 import app.model.helper.GridHelper;
+import app.model.properties.GridProperties;
 import app.repository.WordRepository;
 
 /** 
@@ -20,9 +21,17 @@ public class GridService {
 
 	@Autowired
 	private WordRepository wordRepository;
+	
+	private GridProperties gridProperties;
+	
+	public GridService() {
+		
+		gridProperties = new GridProperties("grid.properties");
+		
+	}
 
 	public void loadGrid(String filename) {
-		GridHelper.solveGrid(new Grid(filename), wordRepository);
+		GridHelper.solveGrid(new Grid(filename, gridProperties), wordRepository, gridProperties);
 	}
 	
 

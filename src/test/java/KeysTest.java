@@ -2,15 +2,20 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import app.model.Key;
+import app.model.properties.GridProperties;
 
 public class KeysTest {
+	
+	@Autowired
+	private GridProperties gridProperties;
 	
 	@Test
 	public void testCompatibility() {
 
-		Key key = new Key();
+		Key key = new Key(gridProperties);
 		
 		// 1:o 3:t (first result, it is accepted)
 		assertTrue(key.mergeResult("1 3 3 1", "otto"));

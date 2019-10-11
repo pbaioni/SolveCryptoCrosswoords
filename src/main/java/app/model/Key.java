@@ -5,20 +5,25 @@ import java.util.TreeMap;
 import org.apache.log4j.Logger;
 
 import app.model.helper.GridHelper;
+import app.model.properties.GridProperties;
 import app.service.WordService;
 
 public class Key {
 	private final static Logger LOGGER = Logger.getLogger(Key.class);
 
-	TreeMap<Integer, String> keyMap;
+	private TreeMap<Integer, String> keyMap;
 
-	int validMerges = 0;
+	private int validMerges = 0;
+	
+	private GridProperties gridProperties;
 
-	public Key() {
+	public Key(GridProperties gridProperties) {
+		this.gridProperties = gridProperties;
 		initKeyMap();
 	}
 
-	public Key(String numericalRelativeCrypto, String word) {
+	public Key(GridProperties gridProperties, String numericalRelativeCrypto, String word) {
+		this.gridProperties = gridProperties;
 		initKeyMap();
 		mergeResult(numericalRelativeCrypto, word);
 	}
@@ -26,7 +31,7 @@ public class Key {
 	private void initKeyMap() {
 		keyMap = new TreeMap<>();
 		for (int i = 1; i <= 26; i++) {
-			keyMap.put(i, "?");
+			keyMap.put(i, gridProperties.getUnknownCharacter());
 		}
 	}
 
@@ -37,7 +42,7 @@ public class Key {
 		LOGGER.debug("Merging [" + nrc + "=" + wordResult + "],  starting key:");
 		LOGGER.debug(getKeyAsString());
 		if (isCompatibleResult(nrc, wordResult)) {
-			String[] numbers = nrc.split(" ");
+			String[] numbers = nrc.split(gridProperties.getLetterSeparator());
 			for (int i = 0; i < wordResult.length(); i++) {
 				keyMap.put(Integer.parseInt(numbers[i]), String.valueOf(wordResult.charAt(i)));
 			}
@@ -52,12 +57,12 @@ public class Key {
 
 	public boolean isCompatibleResult(String nrc, String wordResult) {
 		boolean rval = true;
-		String[] numbers = nrc.split(" ");
+		String[] numbers = nrc.split(gridProperties.getLetterSeparator());
 		for (int i = 0; i < wordResult.length(); i++) {
 			char c = wordResult.charAt(i);
 			String mapValue = keyMap.get(Integer.parseInt(numbers[i]));
 
-			if (!mapValue.equals(String.valueOf(c)) && !mapValue.equals("?")) {
+			if (!mapValue.equals(String.valueOf(c)) && !mapValue.equals(gridProperties.getUnknownCharacter())) {
 				LOGGER.debug("Incompatible result, merge aborted");
 				rval = false;
 				break;
@@ -90,7 +95,7 @@ public class Key {
 
 	@Override
 	public String toString() {
-		String KeyAsString = "Merges: " + validMerges + ", key:";
+		String KeyAsString = "Merges: " + validMerges + ", Key: ";
 		for (Integer key : keyMap.keySet()) {
 			KeyAsString += String.valueOf(key) + "=" + keyMap.get(key) + ", ";
 		}

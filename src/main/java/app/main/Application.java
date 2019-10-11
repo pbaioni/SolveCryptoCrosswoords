@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import app.controller.CommandController;
 import app.controller.DictionnaryController;
 import app.main.properties.ApplicationProperties;
+import app.model.properties.GridProperties;
 import app.service.GridService;
 import app.service.WordService;
 
@@ -18,8 +19,8 @@ public class Application {
 	
 	private GridService gridService;
 
-	public Application(WordService wordService, GridService gridService) {
-		appProperties = new ApplicationProperties("application.properties");
+	public Application(ApplicationProperties appProperties, WordService wordService, GridService gridService) {
+		this.appProperties = appProperties;
 		this.wordService = wordService;
 		this.gridService = gridService;
 	}

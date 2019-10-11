@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import app.model.Grid;
 import app.model.Key;
 import app.model.Word;
+import app.model.properties.GridProperties;
 import app.repository.WordRepository;
 import app.utils.AppFiles;
 
@@ -17,7 +18,7 @@ public class GridHelper {
 
 	private final static Logger LOGGER = Logger.getLogger(GridHelper.class);
 
-	public static void solveGrid(Grid grid, WordRepository repository) {
+	public static void solveGrid(Grid grid, WordRepository repository, GridProperties gridProperties) {
 
 		LOGGER.info("");
 		LOGGER.info("Solving grid...");
@@ -31,7 +32,7 @@ public class GridHelper {
 		//starting with the longest encrypted word to find (length ordered TreeMap), most likely the one with the lowest number of entries in the database
 		for (Map.Entry<String, String> entry : grid.getWordsToDecode().entrySet()) {
 			//checking if we already have a solution for the word to decode (case of all common characters with previous words)
-			if (entry.getValue().contains("?")) {
+			if (entry.getValue().contains(gridProperties.getUnknownCharacter())) {
 
 				String numericalRelativeCrypto = entry.getKey();
 				for (Word w : repository
@@ -41,7 +42,7 @@ public class GridHelper {
 					boolean mergeOk = false;
 					if (solveInit) {
 						//it is the first step, we must add any possible solution
-						Key tempKey = new Key(numericalRelativeCrypto, databaseWord);
+						Key tempKey = new Key(gridProperties, numericalRelativeCrypto, databaseWord);
 						keys.add(tempKey);
 					} else {
 						//for the further steps, we try to merge the database results into the existing keys
