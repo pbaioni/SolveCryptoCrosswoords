@@ -85,11 +85,12 @@ public class Key {
 		return builder.toString();
 	}
 
-	public void printKey() {
-		String allTheKey = "Merges: " + validMerges + ", key:";
+	@Override
+	public String toString() {
+		String KeyAsString = "Merges: " + validMerges + ", key:";
 		for (Integer key : keyMap.keySet()) {
-			allTheKey += String.valueOf(key) + "=" + keyMap.get(key) + ", ";
+			KeyAsString += String.valueOf(key) + "=" + keyMap.get(key) + ", ";
 		}
-		LOGGER.info(allTheKey);
+		return KeyAsString;
 	}
 }

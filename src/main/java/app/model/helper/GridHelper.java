@@ -27,19 +27,18 @@ public class GridHelper {
 	
 	public static void solveGrid(Grid grid, WordRepository repository) {
 
-		List<Key> initKeys = new ArrayList<Key>();
+		List<Key> keys = new ArrayList<Key>();
 		boolean init = true;
 
 		for (Map.Entry<String, String> entry : grid.getDecodeMap().entrySet()) {
-
 			String numericalRelativeCrypto = entry.getKey();
 			for (Word w : repository.findByRelativeCrypto(WordHelper.numericalToAlphabetic(numericalRelativeCrypto))) {
 				
 				if (init) {
 					Key tempKey = new Key(numericalRelativeCrypto, w.getWord());
-					initKeys.add(tempKey);
+					keys.add(tempKey);
 				} else {
-					for (Key key : initKeys) {
+					for (Key key : keys) {
 						boolean mergeOk = key.mergeResult(numericalRelativeCrypto, w.getWord());
 						
 					}
@@ -47,20 +46,38 @@ public class GridHelper {
 			}
 
 			init = false;
+			keys.sort(Comparator.comparing(Key::getValidMerges).reversed());
+			keys = purgeKeys(keys);
 
 		}
 		
 		//printing results
-		initKeys.sort(Comparator.comparing(Key::getValidMerges).reversed());
 		LOGGER.info("Solution key:");
-		initKeys.get(0).printKey();
+		LOGGER.info(keys.get(0).toString());
 		LOGGER.info("");
 		
-		grid.setSolutionKey(initKeys.get(0));
+		grid.setSolutionKey(keys.get(0));
 		
 	}
 	
 	
+	private static List<Key> purgeKeys(List<Key> keys) {
+		
+		int bestValidMerges = keys.get(0).getValidMerges();
+		List<Key> purgedKeys = new ArrayList<Key>();
+
+		for(Key key : keys) {
+			if(key.getValidMerges() >= bestValidMerges-1) {
+				purgedKeys.add(key);
+			}
+			
+		}
+		
+		return purgedKeys;
+		
+	}
+
+
 	public static String cleanNrc(String nrc) {
 		
 		String rval = nrc.trim();
