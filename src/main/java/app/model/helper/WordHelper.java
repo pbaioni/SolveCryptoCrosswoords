@@ -47,5 +47,9 @@ public class WordHelper {
 
 		return alphabeticCrypto;
 	}
+	
+	public static boolean compatibleWords(String decodeMapWord, String databaseWord) {
+		return true;
+	}
 
 }

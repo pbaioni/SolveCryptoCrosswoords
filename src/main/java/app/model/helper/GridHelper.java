@@ -18,68 +18,79 @@ public class GridHelper {
 	private final static Logger LOGGER = Logger.getLogger(GridHelper.class);
 
 	public static Grid loadGrid(String filename) {
-		
+
 		String gridPath = "/grids/" + filename.trim() + ".dat";
 		List<String> stringGrid = AppFiles.getResourceAsLines(gridPath);
 		return new Grid(stringGrid);
 	}
 
-	
 	public static void solveGrid(Grid grid, WordRepository repository) {
 
+		LOGGER.info("");
+		LOGGER.info("Solving grid...");
+		
 		List<Key> keys = new ArrayList<Key>();
-		boolean init = true;
+		boolean solveInit = true;
+		boolean uniqueKey = false;
 
-		for (Map.Entry<String, String> entry : grid.getDecodeMap().entrySet()) {
-			String numericalRelativeCrypto = entry.getKey();
-			for (Word w : repository.findByRelativeCrypto(WordHelper.numericalToAlphabetic(numericalRelativeCrypto))) {
-				
-				if (init) {
-					Key tempKey = new Key(numericalRelativeCrypto, w.getWord());
-					keys.add(tempKey);
-				} else {
-					for (Key key : keys) {
-						boolean mergeOk = key.mergeResult(numericalRelativeCrypto, w.getWord());
-						
+		for (Map.Entry<String, String> entry : grid.getWordsToDecode().entrySet()) {
+			if (entry.getValue().contains("?")) {
+				String numericalRelativeCrypto = entry.getKey();
+				for (Word w : repository
+						.findByRelativeCrypto(WordHelper.numericalToAlphabetic(numericalRelativeCrypto))) {
+
+					String databaseWord = w.getWord();
+					boolean mergeOk = false;
+					if (solveInit) {
+						Key tempKey = new Key(numericalRelativeCrypto, databaseWord);
+						keys.add(tempKey);
+					} else {
+						for (Key key : keys) {
+							mergeOk = key.mergeResult(numericalRelativeCrypto, databaseWord);
+						}
 					}
+					if (uniqueKey && mergeOk) {
+						break;
+					}
+				}
+
+				keys.sort(Comparator.comparing(Key::getValidMerges).reversed());
+				keys = purgeKeys(keys);
+				if (keys.size() == 1) {
+					uniqueKey = true;
+					grid.setSolutionKey(keys.get(0));
+					grid.updateWordsToDecode();
+				}
+				if (solveInit) {
+					solveInit = false;
 				}
 			}
 
-			init = false;
-			keys.sort(Comparator.comparing(Key::getValidMerges).reversed());
-			keys = purgeKeys(keys);
-
 		}
-		
-		//printing results
-		LOGGER.info("Solution key:");
-		LOGGER.info(keys.get(0).toString());
-		LOGGER.info("");
-		
-		grid.setSolutionKey(keys.get(0));
-		
+
+		// printing results
+		grid.printSolution();
+
 	}
-	
-	
+
 	private static List<Key> purgeKeys(List<Key> keys) {
-		
+
 		int bestValidMerges = keys.get(0).getValidMerges();
 		List<Key> purgedKeys = new ArrayList<Key>();
 
-		for(Key key : keys) {
-			if(key.getValidMerges() >= bestValidMerges-1) {
+		for (Key key : keys) {
+			if (key.getValidMerges() == bestValidMerges) {
 				purgedKeys.add(key);
 			}
-			
+
 		}
-		
+
 		return purgedKeys;
-		
+
 	}
 
-
 	public static String cleanNrc(String nrc) {
-		
+
 		String rval = nrc.trim();
 		rval = rval.replaceAll("[-+.^:,@&]", "");
 		rval = rval.replaceAll("  ", " ");
@@ -88,12 +99,5 @@ public class GridHelper {
 
 		return rval;
 	}
-	
-	
-	public static void printMap(Map<String, String> decodeMap) {
-		LOGGER.info("Cryptos:");
-		for (Map.Entry<String, String> entry : decodeMap.entrySet()) {
-			LOGGER.info(entry.getKey() + " : " + entry.getValue().toString());
-		}
-	}
+
 }

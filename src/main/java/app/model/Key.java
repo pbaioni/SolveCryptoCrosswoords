@@ -66,11 +66,14 @@ public class Key {
 		}
 		return rval;
 	}
-	
-	public String getLetterForNumber(int number) {
-		return keyMap.get(number);
+
+	public String getLetterForNumber(String numberAsString) {
+		if (numberAsString.equals("-")) {
+			return numberAsString;
+		} else {
+			return keyMap.get(Integer.parseInt(numberAsString));
+		}
 	}
-	
 
 	public int getValidMerges() {
 		return validMerges;

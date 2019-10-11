@@ -40,7 +40,7 @@ public class Application {
 		wordService.loadGrid("1");
 
 		//load and solve example 2
-		wordService.loadGrid("2");
+		//wordService.loadGrid("2");
 
 	}
 
