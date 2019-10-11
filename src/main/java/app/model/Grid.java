@@ -11,23 +11,26 @@ import org.apache.log4j.Logger;
 
 import app.utils.AppFiles;
 
-
 public class Grid {
 
 	private final static Logger LOGGER = Logger.getLogger(Grid.class);
 
 	private List<String> cryptoRows;
 
+	private List<String> cryptoColumns;
+
 	private Map<String, String> wordsToDecode;
 
 	private List<String> solutionRows;
 
 	private Key solutionKey;
-	
+
 	public Grid(String filename) {
-		
+
 		String gridPath = "/grids/" + filename.trim();
 		this.cryptoRows = AppFiles.getResourceAsLines(gridPath);
+
+		this.cryptoColumns = new ArrayList<String>();
 
 		wordsToDecode = new TreeMap<String, String>(new Comparator<String>() {
 			@Override
@@ -42,23 +45,66 @@ public class Grid {
 			}
 		});
 
+		solutionKey = new Key();
+		createCryptoColumns();
+		fillWordsToDecode();
+		updateWordsToDecode();
 
 		LOGGER.info("Grid loaded");
 		printNumericalGrid(cryptoRows);
-		
-		solutionKey = new Key();
-		fillWordsToDecode(this.cryptoRows);
-		updateWordsToDecode();
 	}
 
-	private void fillWordsToDecode(List<String> cryptoRows) {
+	private void createCryptoColumns() {
 
-		for (String row : cryptoRows) {
+		List<Scanner> scannerList = new ArrayList<Scanner>();
+
+		for (String row : this.cryptoRows) {
+			scannerList.add(new Scanner(row));
+		}
+
+		Scanner referenceScanner = scannerList.get(0);
+
+		//all the scanners have the same number of elements
+		while (referenceScanner.hasNext()) {
+			StringBuilder builder = new StringBuilder();
+			for (Scanner scanner : scannerList) {
+				builder.append(scanner.next());
+				builder.append(" ");
+			}
+
+			cryptoColumns.add(builder.toString().trim());
+		}
+		
+		for (Scanner scanner : scannerList) {
+			scanner.close();
+		}
+
+	}
+
+	private void fillWordsToDecode() {
+
+		//adding horizontal words
+		for (String row : this.cryptoRows) {
 
 			for (String s : row.split("-")) {
 				String numericalRelativeCrypto = s.trim();
 				String word = decodeWord(numericalRelativeCrypto, "");
-				//short words are unuseful for decoding purpose
+				// short words are unuseful for decoding purpose
+				if (word.length() > 3) {
+					for (int i = 1; i < word.length() + 1; i++) {
+						wordsToDecode.put(numericalRelativeCrypto, word);
+					}
+				}
+			}
+		}
+		
+		//adding vertical words
+		for (String column : this.cryptoColumns) {
+
+			for (String s : column.split("-")) {
+				String numericalRelativeCrypto = s.trim();
+				String word = decodeWord(numericalRelativeCrypto, "");
+				// short words are unuseful for decoding purpose
 				if (word.length() > 3) {
 					for (int i = 1; i < word.length() + 1; i++) {
 						wordsToDecode.put(numericalRelativeCrypto, word);
@@ -80,7 +126,7 @@ public class Grid {
 			wordsToDecode.put(entry.getKey(), decodeWord(entry.getKey(), ""));
 		}
 	}
-	
+
 	private String decodeWord(String numericalRelativeCrypto, String separator) {
 		Scanner scanner = new Scanner(numericalRelativeCrypto);
 		StringBuilder builder = new StringBuilder();
@@ -100,8 +146,8 @@ public class Grid {
 	}
 
 	private void printNumericalGrid(List<String> list) {
-		for (String row : list) {
-			LOGGER.info(row);
+		for (String line : list) {
+			LOGGER.info(line);
 		}
 	}
 
