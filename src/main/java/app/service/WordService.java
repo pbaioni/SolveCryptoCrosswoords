@@ -2,7 +2,6 @@ package app.service;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +72,7 @@ public class WordService {
 	}
 
 	public void loadGrid(String filename) {
-		Grid grid = GridHelper.loadGrid(filename);
-		GridHelper.solveGrid(grid, wordRepository);
+		GridHelper.solveGrid(new Grid(filename), wordRepository);
 	}
 	
 

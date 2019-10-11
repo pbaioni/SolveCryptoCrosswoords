@@ -1,9 +1,5 @@
 package app.main;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-
 import org.apache.log4j.Logger;
 
 import app.controller.CommandController;

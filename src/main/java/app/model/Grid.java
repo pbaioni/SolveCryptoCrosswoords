@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+
+import app.utils.AppFiles;
 
 
 public class Grid {
@@ -19,17 +20,14 @@ public class Grid {
 
 	private Map<String, String> wordsToDecode;
 
-	private boolean hasWordsToDecode;
-
-	private Map.Entry<String, String> nextWordToDecode;
-
 	private List<String> solutionRows;
 
 	private Key solutionKey;
-
-	public Grid(List<String> cryptoRows) {
-
-		this.cryptoRows = cryptoRows;
+	
+	public Grid(String filename) {
+		
+		String gridPath = "/grids/" + filename.trim();
+		this.cryptoRows = AppFiles.getResourceAsLines(gridPath);
 
 		wordsToDecode = new TreeMap<String, String>(new Comparator<String>() {
 			@Override
@@ -60,13 +58,13 @@ public class Grid {
 			for (String s : row.split("-")) {
 				String numericalRelativeCrypto = s.trim();
 				String word = decodeWord(numericalRelativeCrypto, "");
+				//short words are unuseful for decoding purpose
 				if (word.length() > 3) {
 					for (int i = 1; i < word.length() + 1; i++) {
 						wordsToDecode.put(numericalRelativeCrypto, word);
 					}
 				}
 			}
-
 		}
 	}
 
@@ -77,30 +75,21 @@ public class Grid {
 		}
 	}
 
-	private String decodeWord(String numericalRelativeCrypto, String separator) {
-		Scanner scanner = new Scanner(numericalRelativeCrypto);
-		StringBuilder builder = new StringBuilder();
-		while (scanner.hasNext()) {
-			builder.append(solutionKey.getLetterForNumber(scanner.next()) + separator);
-		}
-		scanner.close();
-		return builder.toString();
-	}
-
 	public void updateWordsToDecode() {
 		for (Map.Entry<String, String> entry : wordsToDecode.entrySet()) {
 			wordsToDecode.put(entry.getKey(), decodeWord(entry.getKey(), ""));
 		}
-		this.hasWordsToDecode = false;
-		this.nextWordToDecode = null;
-		for (Map.Entry<String, String> entry : wordsToDecode.entrySet()) {
-			if(entry.getValue().contains("?"))
-			{
-				this.hasWordsToDecode = true;
-				this.nextWordToDecode = entry;
-				break;
-			}
+	}
+	
+	private String decodeWord(String numericalRelativeCrypto, String separator) {
+		Scanner scanner = new Scanner(numericalRelativeCrypto);
+		StringBuilder builder = new StringBuilder();
+		while (scanner.hasNext()) {
+			builder.append(solutionKey.getLetterForNumber(scanner.next()));
+			builder.append(separator);
 		}
+		scanner.close();
+		return builder.toString();
 	}
 
 	public void printWordsToDecode() {
@@ -136,16 +125,6 @@ public class Grid {
 
 	public Map<String, String> getWordsToDecode() {
 		return wordsToDecode;
-	}
-
-	public boolean hasWordToDecode() {
-
-		return hasWordsToDecode;
-	}
-
-	public Entry<String, String> getNextWordToDecode() {
-
-		return nextWordToDecode;
 	}
 
 	public void setSolutionKey(Key solutionKey) {
