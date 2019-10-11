@@ -37,10 +37,10 @@ public class Application {
 		}
 
 		//load and solve example 1
-		wordService.loadGrid("1");
+		wordService.loadGrid("grid1.dat");
 
 		//load and solve example 2
-		//wordService.loadGrid("2");
+		wordService.loadGrid("grid2.dat");
 
 	}
 
