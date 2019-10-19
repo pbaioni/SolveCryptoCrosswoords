@@ -95,7 +95,7 @@ public class GridHelper {
 		List<Key> purgedKeys = new ArrayList<Key>();
 
 		for (Key key : keys) {
-			if (key.getValidMerges() == bestValidMerges) {
+			if (key.getValidMerges() >= bestValidMerges - 1) {
 				purgedKeys.add(key);
 			}
 

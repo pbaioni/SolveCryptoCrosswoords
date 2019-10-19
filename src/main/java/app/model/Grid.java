@@ -1,7 +1,11 @@
 package app.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -38,19 +42,7 @@ public class Grid {
 
 		this.cryptoColumns = new ArrayList<String>();
 
-		wordsToDecode = new TreeMap<String, String>(new Comparator<String>() {
-			@Override
-			public int compare(String s1, String s2) {
-				if (s1.length() > s2.length()) {
-					return -1;
-				} else if (s1.length() < s2.length()) {
-					return 1;
-				} else {
-					return s1.compareTo(s2);
-				}
-			}
-		});
-
+		wordsToDecode = new TreeMap<String, String>();
 		solutionKey = new Key(gridProperties);
 		createCryptoColumns();
 		fillWordsToDecode();
@@ -121,7 +113,32 @@ public class Grid {
 				}
 			}
 		}
+		
+		wordsToDecode = sortByWordLength(wordsToDecode);
 	}
+	
+    private static Map<String, String> sortByWordLength(Map<String, String> hm) 
+    { 
+        // Create a list from elements of HashMap 
+        List<Map.Entry<String, String> > list = 
+               new LinkedList<Map.Entry<String, String> >(hm.entrySet()); 
+  
+        // Sort the list 
+        Collections.sort(list, new Comparator<Map.Entry<String, String> >() { 
+            public int compare(Map.Entry<String, String> o1,  
+                               Map.Entry<String, String> o2) 
+            { 
+                return (o2.getValue()).compareTo(o1.getValue()); 
+            } 
+        }); 
+          
+        // put data from sorted list to hashmap  
+        HashMap<String, String> temp = new LinkedHashMap<String, String>(); 
+        for (Map.Entry<String, String> aa : list) { 
+            temp.put(aa.getKey(), aa.getValue()); 
+        } 
+        return temp; 
+    }
 
 	public void calculateSolution() {
 
