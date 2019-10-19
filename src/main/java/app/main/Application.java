@@ -42,6 +42,9 @@ public class Application {
 
 		//load and solve example 2
 		gridService.loadGrid("grid2.dat");
+		
+		//load and solve example 2
+		gridService.loadGrid("grid3.dat");
 
 	}
 
