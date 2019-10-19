@@ -37,6 +37,12 @@ public class WordService {
 		wordRepository.save(words);
 	}
 	
+	@Transactional
+	public void deleteOne(String word) {
+		wordRepository.delete(word);
+		LOGGER.debug(word + " deleted from the database");
+	}
+	
 	@Transactional(readOnly=true)
 	public Word findOne(String word) {
 		Word w = wordRepository.findOne(word);

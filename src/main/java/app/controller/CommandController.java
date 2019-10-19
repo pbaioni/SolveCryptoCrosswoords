@@ -41,6 +41,8 @@ public class CommandController implements Runnable {
 			LOGGER.info("get word : searches word in the database");
 			LOGGER.info("rc relativeCrypto : searches relativeCrypto in the database");
 			LOGGER.info("nrc numericalRelativeCrypto : searches numericalRelativeCrypto in the database");
+			LOGGER.info("insert word : inserts a word in the database");
+			LOGGER.info("delete word : deletes a word from the database");
 			LOGGER.info("load filename : loads crypto crossword grid from file");
 
 			while (runInlineCommands) {
@@ -96,7 +98,10 @@ public class CommandController implements Runnable {
 				runInlineCommands = false;
 				break;
 			case "insert":
-				wordService.addOne(new Word(argument));
+				wordService.addOne(new Word(argument.trim()));
+				break;
+			case "delete":
+				wordService.deleteOne(argument);
 				break;
 			case "get":
 				wordService.findOne(argument);
