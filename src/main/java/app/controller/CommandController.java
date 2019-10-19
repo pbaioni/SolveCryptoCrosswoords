@@ -22,6 +22,8 @@ public class CommandController implements Runnable {
 	
 	private static GridService gridService;
 
+	private static boolean runInlineCommands = true;
+
 	public CommandController(WordService wordService, GridService gridService) {
 		CommandController.wordService = wordService;
 		CommandController.gridService = gridService;
@@ -41,7 +43,7 @@ public class CommandController implements Runnable {
 			LOGGER.info("nrc numericalRelativeCrypto : searches numericalRelativeCrypto in the database");
 			LOGGER.info("load filename : loads crypto crossword grid from file");
 
-			while (true) {
+			while (runInlineCommands) {
 
 				LOGGER.info("Enter command: ");
 				String input = br.readLine();
@@ -89,6 +91,12 @@ public class CommandController implements Runnable {
 			case "q":
 				LOGGER.info("Exit!");
 				System.exit(0);
+				break;
+			case "stop":
+				runInlineCommands = false;
+				break;
+			case "insert":
+				wordService.addOne(new Word(argument));
 				break;
 			case "get":
 				wordService.findOne(argument);
