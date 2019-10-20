@@ -1,12 +1,13 @@
 package app.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
 import app.model.helper.GridHelper;
 import app.model.properties.GridProperties;
-import app.service.WordService;
 
 public class Key {
 	private final static Logger LOGGER = Logger.getLogger(Key.class);
@@ -14,6 +15,8 @@ public class Key {
 	private TreeMap<Integer, String> keyMap;
 
 	private int validMerges = 0;
+	
+	private List<String> mergedWords = new ArrayList<String>();;
 	
 	private GridProperties gridProperties;
 
@@ -49,6 +52,8 @@ public class Key {
 
 			LOGGER.debug("End key:");
 			LOGGER.debug(getKeyAsString());
+			
+			mergedWords.add(wordResult);
 			validMerges++;
 			return true;
 		}
@@ -73,7 +78,7 @@ public class Key {
 	}
 
 	public String getLetterForNumber(String numberAsString) {
-		if (numberAsString.equals("-")) {
+		if (numberAsString.equals(gridProperties.getWordSeparator())) {
 			return numberAsString;
 		} else {
 			return keyMap.get(Integer.parseInt(numberAsString));
@@ -95,7 +100,7 @@ public class Key {
 
 	@Override
 	public String toString() {
-		String KeyAsString = "Merges: " + validMerges + ", Key: ";
+		String KeyAsString = "Merges: " + validMerges + ", " + mergedWords + "\nKey: ";
 		for (Integer key : keyMap.keySet()) {
 			KeyAsString += String.valueOf(key) + "=" + keyMap.get(key) + ", ";
 		}

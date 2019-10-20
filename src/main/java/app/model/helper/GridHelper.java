@@ -58,7 +58,7 @@ public class GridHelper {
 					}
 				}
 
-				//putting at the top of the list the key with the highest number of valid merges (probable solution)
+				//putting at the top of the list the key with the highest number of valid merges (most probable solution)
 				keys.sort(Comparator.comparing(Key::getValidMerges).reversed());
 				
 				//discarding the keys with lower number of valid merges
