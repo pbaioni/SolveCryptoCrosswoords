@@ -59,15 +59,15 @@ public class Key {
 		boolean rval = true;
 		String[] numbers = nrc.split(gridProperties.getLetterSeparator());
 		for (int i = 0; i < wordResult.length(); i++) {
-			char c = wordResult.charAt(i);
+			String letter = String.valueOf(wordResult.charAt(i));
 			String mapValue = keyMap.get(Integer.parseInt(numbers[i]));
 
-			if (!mapValue.equals(String.valueOf(c)) && !mapValue.equals(gridProperties.getUnknownCharacter())) {
+			if ( (!mapValue.equals(letter) && !mapValue.equals(gridProperties.getUnknownCharacter())) 
+					|| (!mapValue.equals(letter) && keyMap.containsValue(letter))) {
 				LOGGER.debug("Incompatible result, merge aborted");
 				rval = false;
 				break;
 			}
-
 		}
 		return rval;
 	}
