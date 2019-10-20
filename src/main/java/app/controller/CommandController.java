@@ -101,7 +101,7 @@ public class CommandController implements Runnable {
 				wordService.addOne(new Word(argument.trim()));
 				break;
 			case "delete":
-				wordService.deleteOne(argument);
+				wordService.deleteOne(argument.trim());
 				break;
 			case "get":
 				wordService.findOne(argument);
